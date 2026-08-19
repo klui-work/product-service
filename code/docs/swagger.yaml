@@ -1,0 +1,233 @@
+basePath: /
+definitions:
+  application.CreateProductDto:
+    properties:
+      description:
+        example: Apple AirPods Pro 2nd Generation
+        type: string
+      name:
+        example: AirPods Pro 2
+        type: string
+      price:
+        example: 8990
+        type: number
+      sale_price:
+        example: 7990
+        type: number
+    type: object
+  application.PatchProductDto:
+    properties:
+      description:
+        example: Apple iPhone 16 Pro Max 512GB
+        type: string
+      name:
+        example: iPhone 16 Pro Max
+        type: string
+      price:
+        example: 52900
+        type: number
+      sale_price:
+        example: 49900
+        type: number
+    type: object
+  application.ProductDto:
+    properties:
+      description:
+        example: Apple iPhone 16 Pro 256GB
+        type: string
+      id:
+        example: a1b2c3d4-e5f6-7890-abcd-ef1234567801
+        type: string
+      name:
+        example: iPhone 16 Pro
+        type: string
+      price:
+        example: 48900
+        type: number
+      sale_price:
+        example: 45900
+        type: number
+    type: object
+  response.CreateProductResponse:
+    properties:
+      data:
+        additionalProperties: true
+        type: object
+      error_code:
+        example: ""
+        type: string
+      message:
+        example: ""
+        type: string
+      successful:
+        example: true
+        type: boolean
+    type: object
+  response.ErrorResponse:
+    description: Standard API error response format
+    properties:
+      data:
+        type: object
+      error_code:
+        example: E_VALIDATION_REQUIRED
+        type: string
+      message:
+        example: name is required
+        type: string
+      successful:
+        example: false
+        type: boolean
+    type: object
+  response.HealthCheckData:
+    properties:
+      msg:
+        example: Product API is healthy
+        type: string
+    type: object
+  response.HealthCheckResponse:
+    properties:
+      data:
+        $ref: '#/definitions/response.HealthCheckData'
+      error_code:
+        example: ""
+        type: string
+      message:
+        example: ""
+        type: string
+      successful:
+        example: true
+        type: boolean
+    type: object
+  response.PatchResponse:
+    description: PATCH product success response format
+    properties:
+      error_code:
+        example: ""
+        type: string
+      successful:
+        example: true
+        type: boolean
+    type: object
+  response.ProductListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/application.ProductDto'
+        type: array
+      error_code:
+        example: ""
+        type: string
+      message:
+        example: ""
+        type: string
+      successful:
+        example: true
+        type: boolean
+    type: object
+host: localhost:3333
+info:
+  contact: {}
+  description: Product service API for managing products
+  title: Primo Product API
+  version: "1.0"
+paths:
+  /product:
+    get:
+      description: Retrieve a list of all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ProductListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get all products
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      description: Create a new product
+      parameters:
+      - description: Create product request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/application.CreateProductDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CreateProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Create a product
+      tags:
+      - product
+  /product/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Partially update a product by ID. Uses seed data ID as example.
+      parameters:
+      - description: Product ID (UUID)
+        example: a1b2c3d4-e5f6-7890-abcd-ef1234567801
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Patch product request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/application.PatchProductDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.PatchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Patch a product
+      tags:
+      - product
+  /product/health:
+    get:
+      description: Check if the Product API is healthy
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.HealthCheckResponse'
+      summary: Health check
+      tags:
+      - product
+swagger: "2.0"
