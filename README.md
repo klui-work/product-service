@@ -98,6 +98,7 @@ Response:
 {
   "successful": true,
   "error_code": "",
+  "message": "",
   "data": [
     {
       "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
@@ -105,8 +106,42 @@ Response:
       "description": "Apple iPhone 16 Pro 256GB",
       "price": 48900,
       "sale_price": 45900
+    },
+    {
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+      "name": "MacBook Air M3",
+      "description": "Apple MacBook Air M3 15-inch 256GB",
+      "price": 44900,
+      "sale_price": 42900
+    },
+    {
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+      "name": "iPad Pro M4",
+      "description": "Apple iPad Pro M4 11-inch 256GB",
+      "price": 39900,
+      "sale_price": 37900
     }
   ]
+}
+```
+
+### GET /product/health
+
+Health check.
+
+```bash
+curl http://localhost:3333/product/health
+```
+
+Response:
+```json
+{
+  "successful": true,
+  "error_code": "",
+  "message": "",
+  "data": {
+    "msg": "Product API is healthy"
+  }
 }
 ```
 
@@ -141,7 +176,18 @@ Response:
 {
   "successful": true,
   "error_code": "",
-  "data": null
+  "message": "",
+  "data": {}
+}
+```
+
+Error response example:
+```json
+{
+  "successful": false,
+  "error_code": "E_VALIDATION_REQUIRED",
+  "message": "name is required",
+  "data": {}
 }
 ```
 
@@ -165,6 +211,26 @@ Response:
   "error_code": ""
 }
 ```
+
+Error response example:
+```json
+{
+  "successful": false,
+  "error_code": "E_NOT_FOUND",
+  "message": "product not found",
+  "data": {}
+}
+```
+
+## Response Format Summary
+
+| Endpoint | Success `data` | Notes |
+|----------|----------------|-------|
+| GET `/product` | array of products | includes `message` |
+| GET `/product/health` | `{ "msg": "..." }` | includes `message` |
+| POST `/product` | `{}` | empty object, never `null` |
+| PATCH `/product/{id}` | *(no `data` field)* | only `successful` + `error_code` |
+| Error (all endpoints) | `{}` | includes `message` + `error_code` |
 
 ## Run Tests
 
